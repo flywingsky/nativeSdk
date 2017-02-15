@@ -6,6 +6,14 @@ INCLUDEPATH +=/home/genglei-cuan/ssd/work/weimi/weimi-native-sdk/jni/third/json1
 INCLUDEPATH +=/home/genglei-cuan/ssd/work/weimi/weimi-native-sdk/jni/third/libcurl/android-build/include
 }
 
+macx{
+INCLUDEPATH +=/Users/a-00/tools/android-ndk-r12b/platforms/android-23/arch-arm/usr/include
+INCLUDEPATH +=/Users/a-00/work/workcode/nativeSdk/jni/third/cryptopp565/android-build/include
+INCLUDEPATH +=/Users/a-00/work/workcode/nativeSdk/jni/third/easysqlite/android-build/include
+INCLUDEPATH +=/Users/a-00/work/workcode/nativeSdk/jni/third/json11
+INCLUDEPATH +=/Users/a-00/work/workcode/nativeSdk/jni/third/libcurl/android-build/include
+}
+
 INCLUDEPATH += jni
 
 HEADERS += \
