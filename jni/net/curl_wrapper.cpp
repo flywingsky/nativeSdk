@@ -8,6 +8,9 @@
 
 
 #include "curl_wrapper.h"
+#include <utils/log.h>
+#include <map>
+#include "http_request.h"
 
 godin::CurlWrapper::CurlWrapper() {
   libCurl_ = curl_easy_init();
@@ -17,6 +20,7 @@ godin::CurlWrapper::~CurlWrapper() {
   if(libCurl_ != NULL)
     curl_easy_cleanup(libCurl_);
 }
+
 
 
 template<class T>
@@ -29,7 +33,7 @@ bool godin::CurlWrapper::getCurlInfo(CURLINFO option, T data) {
   return CURLE_OK == curl_easy_getinfo(libCurl_, option, data);
 }
 
-bool godin::CurlWrapper::configureLibCurl(CURL *curl, char *error_buffer, bool isHttps) {
+bool godin::CurlWrapper::configureLibCurl(CURL *curl, char *error_buffer) {
 
   if(curl == NULL)
     return false;
@@ -65,7 +69,49 @@ bool godin::CurlWrapper::configureLibCurl(CURL *curl, char *error_buffer, bool i
   if (code != CURLE_OK) {
     return false;
   }
+  return true;
+}
 
+bool godin::CurlWrapper::performLibCurl(int64_t *response_code) {
+
+  /// 执行 http 请求
+  /// 最长等待30s时间
+  if (CURLE_OK != curl_easy_perform(libCurl_)) {
+    return false;
+  }
+
+  /// 获取libcurl执行结果
+  /// 获取 http 返回的 status code 如200,404等等
+  long http_response_code;
+  CURLcode code = curl_easy_getinfo(libCurl_, CURLINFO_RESPONSE_CODE, &http_response_code);
+  if (response_code) {
+    *response_code = static_cast<int64_t>(http_response_code);
+  }
+
+  /// 检查执行结果
+  if ((code != CURLE_OK) || (*response_code != 200)) {
+    godin::Log::e("libcurl curl_easy_getinfo failed: %s", curl_easy_strerror(code));
+    return false;
+  }
+
+  return true;
+}
+
+
+bool godin::CurlWrapper::initCurl(const godin::HttpRequest *request,
+                                  writeCallback callback,
+                                  void *stream,
+                                  writeCallback header_callback,
+                                  void *header_stream,
+                                  char *error_buffer,
+                                  bool is_https) {
+  if(libCurl_ == NULL)
+    return false;
+
+  if(!configureLibCurl(libCurl_,error_buffer)){
+    godin::Log::e(" configure libcurl error_buffer failed.");
+    return false;
+  }
   /**
    * 如果是 https 连接的话,
    * 取消 SSL 非法认证错误.
@@ -75,28 +121,37 @@ bool godin::CurlWrapper::configureLibCurl(CURL *curl, char *error_buffer, bool i
    * TODO: 后续根据实际情况,决定是否打开该选项
    */
   if(isHttps){
-   code =  curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 0L);
+   code =  setCurlOption(CURLOPT_SSL_VERIFYPEER, 0L);
    if (code != CURLE_OK) {
+     godin::Log::e(" configure CURLOPT_SSL_VERIFYPEER failed.");
      return false;
    }
-   code =  curl_easy_setopt(handle, CURLOPT_SSL_VERIFYHOST, 0L);
+   code =  setCurlOption(CURLOPT_SSL_VERIFYHOST, 0L);
    if (code != CURLE_OK) {
+     godin::Log::e(" configure CURLOPT_SSL_VERIFYHOST failed.");
      return false;
    }
+   #ifdef HTTPS_DEBUG
+   setCurlOption(CURLOPT_VERBOSE, 1L);
+   #endif
   }
-  return true;
-}
-
-bool godin::CurlWrapper::performLibCurl(int64_t *response_code) {
-
-  /// 最长等待30s时间
-  if (CURLE_OK != curl_easy_perform(libCurl_)) {
-    return false;
+  /// 构建 http 请求的 header
+  std::map<std::string, std::string> request_header = request->requestHeader();
+  if (!request_header.empty()) {
+    for (auto it = request_header.begin(); it != request_header.end(); ++it) {
+      std::string header_string = it->first + ":" + it->second;
+      headers_ = curl_slist_append(headers_, header_string.c_str());
+      if (!setCurlOption(CURLOPT_HTTPHEADER, headers_)) {
+        godin::Log::e(" configure CURLOPT_HTTPHEADER failed.");
+        return false;
+      }
+    }
   }
+  return setCurlOption(CURLOPT_URL, request->url().c_str())/* 设置 url*/
+  && setCurlOption(CURLOPT_HEADERFUNCTION, header_callback) /* libcurl 收到 http 头部数据时的回调方法*/
+  && setCurlOption(CURLOPT_HEADERDATA, header_stream) /* libcurl 收到的 http 头部数据的地址*/
+  && setCurlOption(CURLOPT_WRITEFUNCTION, callback) /* libcurl 收到数据后的回调方法，即可以用来保存数据*/
+  && setCurlOption(CURLOPT_WRITEDATA, stream); /* libcurl 收到的数据的地址*/
 
-  long http_response_code;/// 如200,404等等
-  CURLcode code = curl_easy_getinfo(libCurl_, CURLINFO_RESPONSE_CODE, &http_response_code);
-  if (response_code) {
-    *response_code = static_cast<int64_t>(http_response_code);
-  }
+
 }
