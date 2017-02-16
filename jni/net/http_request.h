@@ -119,7 +119,7 @@ class HttpRequest {
     std::vector<char> raw_data_;
 
     /**
-     * @brief IdentifierTag
+     * @brief createIdentifier
      * 仅供友元类 HttpClient 调用
      * @return
      */

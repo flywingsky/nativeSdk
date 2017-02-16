@@ -36,6 +36,31 @@ class HttpResponse {
      */
     friend class HttpClient;
 
+    const HttpRequest* getHttpRequest() const;
+
+    bool isSucceed() const { return succeed_; }
+    void setSucceed(bool succeed) { succeed_ = succeed; }
+
+
+    std::vector<char> responseData() const { return response_data_; }
+    std::string responseDataAsString() const;
+    void setResponseData(std::vector<char> buffer) { response_data_ = buffer; }
+
+
+    std::string errorBuffer() const { return error_buffer_; }
+    void setErrorBuffer(const std::string& error) { error_buffer_ = error; }
+
+
+    int64_t responseCode() const { return response_code_; }
+    void setResponseCode(int64_t code) { response_code_ = code; }
+
+
+    std::map<std::string, std::string> responseHeader() const { return response_header_;  }
+    void addValueToHttpHeaderField(const std::string& key, const std::string& value) {
+      response_header_.insert(std::pair<std::string, std::string>(key, value));
+    }
+
+
   private:
     DISALLOW_COPY_AND_ASSIGN(HttpResponse);
 
