@@ -19,8 +19,12 @@ INCLUDEPATH += jni
 HEADERS += \
     jni/net/http_client.h \
     jni/base/macros.h \
-    jni/net/http_request.h
+    jni/net/http_request.h \
+    jni/net/http_response.h \
+    jni/net/curl_wrapper.h
 
 SOURCES += \
     jni/net/http_client.cpp \
-    jni/net/http_request.cpp
+    jni/net/http_request.cpp \
+    jni/net/http_response.cpp \
+    jni/net/curl_wrapper.cpp
