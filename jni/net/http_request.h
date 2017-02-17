@@ -73,7 +73,7 @@ class HttpRequest {
      * @param type
      * @return
      */
-    static std::string StringFromHttpRequestType(HttpRequest::Type type);
+    static std::string stringFromHttpRequestType(HttpRequest::Type type);
 
     /**
      * @brief addValueToHttpHeaderField

@@ -28,7 +28,7 @@ std::unique_ptr<godin::HttpRequest> godin::HttpRequest::Clone() const {
   return request;
 }
 
-std::string godin::HttpRequest::StringFromHttpRequestType(godin::HttpRequest::Type type) {
+std::string godin::HttpRequest::stringFromHttpRequestType(godin::HttpRequest::Type type) {
   if (type == HttpRequest::Type::GET) {
     return "GET";
   } else if (type == HttpRequest::Type::POST) {
