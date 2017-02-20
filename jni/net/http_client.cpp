@@ -11,6 +11,7 @@
 #include <utils/log.h>
 #include "curl_wrapper.h"
 #include <string.h>
+#include <utils/string_utils.h>
 
 #define ERRCODR_BUF_SIZE 256
 
@@ -195,9 +196,11 @@ void godin::HttpClient::performHttpRequest(std::unique_ptr<godin::HttpRequest> r
        while (std::getline(resp, header) && header != "\r") {
          index = header.find(':', 0);
          if (index != std::string::npos) {
-           std::string key_to_trim = header.substr(0, index);
-           std::string value_to_trim = header.substr(index + 1);
-
+           std::string key_include_trim = header.substr(0, index);
+           std::string value_include_trim = header.substr(index + 1);
+           std::string key = godin::StringUtils::trim(key_include_trim);
+           std::string value = godin::StringUtils::trim(value_include_trim);
+           http_response->response_header_.insert(std::make_pair(key, value));
          }
        }
    }
