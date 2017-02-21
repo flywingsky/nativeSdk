@@ -9,6 +9,8 @@
 
 #include "http_request.h"
 #include <time.h>
+#include <iostream>
+#include <utils/string_utils.h>
 
 godin::HttpRequest::HttpRequest() {
   request_type_ = Type::UNKNOWN;
@@ -57,6 +59,6 @@ std::string godin::HttpRequest::getValueForHttpHeaderField(const std::string &ke
 std::string godin::HttpRequest::createIdentifier() const {
   time_t now;
   time(&now);
-  return url_ + std::to_string(now);
+  return url_ + godin::StringUtils::toString(now);
 }
 

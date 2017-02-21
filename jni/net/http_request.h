@@ -30,7 +30,7 @@ class HttpRequest {
      * 请求的类型
      */
     enum Type {
-      GET,
+      GET = 0,
       POST,
       PUT,
       DELETE,

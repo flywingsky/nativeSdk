@@ -12,10 +12,11 @@
 #include "curl_wrapper.h"
 #include <string.h>
 #include <utils/string_utils.h>
+#include <sstream>
 
 #define ERRCODR_BUF_SIZE 256
 
-godin::HttpClient* shared_client_ = nullptr;
+godin::HttpClient* godin::HttpClient::shared_client_ = nullptr;
 
 
 
@@ -85,7 +86,7 @@ void godin::HttpClient::performHttpRequest(std::unique_ptr<godin::HttpRequest> r
   /// 检查请求是否已经被取消
    if(isCancelledRequest(request->identifier())){
       godin::Log::e(" request %s is camcelled.",request->url().c_str());
-      return false;
+      return ;
    }
 
    std::vector<char> response_data;       // 存储服务器返回的 http body 数据
@@ -116,8 +117,7 @@ void godin::HttpClient::performHttpRequest(std::unique_ptr<godin::HttpRequest> r
                                  error_buffer,
                                  isHttps)
                    && curl.setCurlOption(CURLOPT_FOLLOWLOCATION, true)/* 该参数设置为非零值表示follow服务器返回的重定向信息 */
-                   && curl.performLibCurl(&response_code);
-
+                   && curl.performLibCurl(&response_code);      
        }
        break;
        case HttpRequest::Type::POST:
@@ -176,16 +176,14 @@ void godin::HttpClient::performHttpRequest(std::unique_ptr<godin::HttpRequest> r
    /// 被取消的话,也就没接收 response 消息的必要了
    if(isCancelledRequest(request->identifier())){
       godin::Log::e(" request %s is camcelled.",request->url().c_str());
-      return false;
+      return ;
    }
-
-   /// 开始处理 response 消息
-   /// 即创建和设置 HttpResponse
+   /// 创建和设置 HttpResponse
    std::unique_ptr<HttpResponse> http_response(new HttpResponse(std::move(request)));
    http_response->setResponseCode(response_code);/// 提取状态码
    http_response->setErrorBuffer(error_buffer);  /// 提取错误信息
    http_response->setSucceed(success); /// 请求是否执行成功
-
+   godin::Log::i("response code = %d",response_code);
    if(success){
        std::string response_header_string(response_header.begin(), response_header.end());
        http_response->setResponseData(response_data);/// 提取返回的数据
@@ -204,5 +202,40 @@ void godin::HttpClient::performHttpRequest(std::unique_ptr<godin::HttpRequest> r
          }
        }
    }
+   /// 调用回调方法,处理 response 消息
+   performHttpResponseCallback(std::move(http_response),callback);
+}
 
+void godin::HttpClient::performHttpResponseCallback(std::unique_ptr<godin::HttpResponse> response, std::function<void (std::unique_ptr<godin::HttpResponse>)> callback) {
+   callback(std::move(response));
+}
+
+
+void godin::HttpClient::asyncSend(std::unique_ptr<godin::HttpRequest> request, std::function<void (std::unique_ptr<godin::HttpResponse>)> callback) {
+
+  std::function<void(std::unique_ptr<HttpRequest>,std::function<void(std::unique_ptr<HttpResponse>)>)> func =
+      std::bind(&HttpClient::performHttpRequest, this, std::placeholders::_1, std::placeholders::_2);
+
+  request->setIdentifier(request->createIdentifier());
+
+  std::lock_guard<std::mutex> lg(request_queue_mutex_);
+  request_queue_.push_back(request->identifier());
+
+  std::thread thread(func, std::move(request), callback);
+  thread.detach();/// 分离线程
+}
+
+void godin::HttpClient::syncSend(std::unique_ptr<godin::HttpRequest> request, std::function<void (std::unique_ptr<godin::HttpResponse>)> callback){
+  request->setIdentifier(request->createIdentifier());
+
+  request_queue_mutex_.lock();
+  request_queue_.push_back(request->identifier());
+  request_queue_mutex_.unlock();
+
+  performHttpRequest(std::move(request),callback);
+}
+
+void godin::HttpClient::cancelAllRequests() {
+  std::lock_guard<std::mutex> lg(request_queue_mutex_);
+  request_queue_.clear();
 }

@@ -14,10 +14,10 @@
 #include <memory>
 #include <vector>
 #include <string>
-
+#include "http_request.h"
 NS_GODIN_BEGIN
 
-class HttpRequest;
+
 
 class HttpResponse {
 

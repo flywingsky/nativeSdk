@@ -28,11 +28,50 @@ class HttpClient {
 
 
   public:
-  static HttpClient* getInstanceClient();
-  static void freeInstanceClient();
+
+    HttpClient(){}
+   /**
+    * @brief getInstanceClient
+    * 获取一个全局唯一的客户端实例,
+    * 适合用于异步发送请求.
+    * 最好不要将该实例用于同步发送请求.
+    * @return
+    */
+    static HttpClient* getInstanceClient();
+    /**
+     * @brief freeInstanceClient
+     * 释放全局唯一的客户端实例资源
+     */
+    static void freeInstanceClient();
+
+    /**
+     * @brief asyncSend
+     * 异步发送请求,立即返回
+     * 所谓异步请求,是指在一个
+     * 新线程中执行请求.
+     * @param request
+     * @param callback
+     */
+    void asyncSend(std::unique_ptr<HttpRequest> request,
+              std::function<void(std::unique_ptr<HttpResponse>)> callback);
+
+    /**
+     * @brief syncSend
+     * 同步发送请求,阻塞直到请求执行完毕
+     * @param request
+     * @param callback
+     */
+    void syncSend(std::unique_ptr<HttpRequest> request,
+              std::function<void(std::unique_ptr<HttpResponse>)> callback);
+
+
+    /**
+     * @brief cancelAllRequests
+     * 取消所有请求
+     */
+    void cancelAllRequests();
 
   private:
-    HttpClient(){}
 
     /**
      * @brief removeRequest
@@ -61,9 +100,23 @@ class HttpClient {
     bool isCancelledRequest(const std::string& identifer) const;
 
 
+    /**
+     * @brief performHttpRequest
+     * 执行 http 请求,
+     * 内部会调用performHttpResponseCallback(),
+     * 执行请求成功后对respon的处理回调
+     * @param request
+     * @param callback
+     */
     void performHttpRequest(std::unique_ptr<HttpRequest> request,
                             std::function<void(std::unique_ptr<HttpResponse>)> callback);
 
+    /**
+     * @brief performHttpResponseCallback
+     * 调用用来处理 http 服务器返回的 respon 消息的回调方法
+     * @param response
+     * @param callback
+     */
     void performHttpResponseCallback(std::unique_ptr<HttpResponse> response,
                                     std::function<void(std::unique_ptr<HttpResponse>)> callback);
 

@@ -23,16 +23,6 @@ godin::CurlWrapper::~CurlWrapper() {
 
 
 
-template<class T>
-bool godin::CurlWrapper::setCurlOption(CURLoption option, T data) {
-  return CURLE_OK == curl_easy_setopt(libCurl_, option, data);
-}
-
-template<class T>
-bool godin::CurlWrapper::getCurlInfo(CURLINFO option, T data) {
-  return CURLE_OK == curl_easy_getinfo(libCurl_, option, data);
-}
-
 bool godin::CurlWrapper::configureLibCurl(CURL *curl, char *error_buffer) {
 
   if(curl == NULL)
@@ -64,7 +54,7 @@ bool godin::CurlWrapper::configureLibCurl(CURL *curl, char *error_buffer) {
   if (code != CURLE_OK) {
     return false;
   }
-  code = curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
+
 
   if (code != CURLE_OK) {
     return false;
@@ -93,7 +83,6 @@ bool godin::CurlWrapper::performLibCurl(int64_t *response_code) {
     godin::Log::e("libcurl curl_easy_getinfo failed: %s", curl_easy_strerror(code));
     return false;
   }
-
   return true;
 }
 
@@ -112,6 +101,7 @@ bool godin::CurlWrapper::initCurl(const godin::HttpRequest *request,
     godin::Log::e(" configure libcurl error_buffer failed.");
     return false;
   }
+
   /**
    * 如果是 https 连接的话,
    * 取消 SSL 非法认证错误.
@@ -120,20 +110,26 @@ bool godin::CurlWrapper::initCurl(const godin::HttpRequest *request,
    *
    * TODO: 后续根据实际情况,决定是否打开该选项
    */
-  if(isHttps){
-   code =  setCurlOption(CURLOPT_SSL_VERIFYPEER, 0L);
-   if (code != CURLE_OK) {
+  bool code = false;
+  if(is_https){
+   code =  setCurlOption(CURLOPT_SSL_VERIFYPEER, 0);
+   if (!code) {
      godin::Log::e(" configure CURLOPT_SSL_VERIFYPEER failed.");
      return false;
    }
-   code =  setCurlOption(CURLOPT_SSL_VERIFYHOST, 0L);
-   if (code != CURLE_OK) {
+   code =  setCurlOption(CURLOPT_SSL_VERIFYHOST, 0);
+   if (!code) {
      godin::Log::e(" configure CURLOPT_SSL_VERIFYHOST failed.");
      return false;
    }
    #ifdef HTTPS_DEBUG
    setCurlOption(CURLOPT_VERBOSE, 1L);
    #endif
+  }
+  code = setCurlOption(CURLOPT_NOSIGNAL, 1L);
+  if (!code) {
+    godin::Log::e(" configure CURLOPT_NOSIGNAL failed.");
+    return false;
   }
   /// 构建 http 请求的 header
   std::map<std::string, std::string> request_header = request->requestHeader();
@@ -147,11 +143,11 @@ bool godin::CurlWrapper::initCurl(const godin::HttpRequest *request,
       }
     }
   }
-  return setCurlOption(CURLOPT_URL, request->url().c_str())/* 设置 url*/
+  bool success = setCurlOption(CURLOPT_URL, request->url().c_str())/* 设置 url*/
   && setCurlOption(CURLOPT_HEADERFUNCTION, header_callback) /* libcurl 收到 http 头部数据时的回调方法*/
   && setCurlOption(CURLOPT_HEADERDATA, header_stream) /* libcurl 收到的 http 头部数据的地址*/
   && setCurlOption(CURLOPT_WRITEFUNCTION, callback) /* libcurl 收到数据后的回调方法，即可以用来保存数据*/
   && setCurlOption(CURLOPT_WRITEDATA, stream); /* libcurl 收到的数据的地址*/
-
+  return success;
 
 }

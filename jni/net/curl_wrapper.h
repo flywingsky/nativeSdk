@@ -79,10 +79,14 @@ class CurlWrapper {
 
   private:
     template<class T>
-    bool setCurlOption(CURLoption option, T data);
+    bool setCurlOption(CURLoption option, T data){
+       return CURLE_OK == curl_easy_setopt(libCurl_, option, data);
+    }
 
     template<class T>
-    bool getCurlInfo(CURLINFO option, T data);
+    bool getCurlInfo(CURLINFO option, T data){
+       return CURLE_OK == curl_easy_getinfo(libCurl_, option, data);
+    }
 
     /**
      * @brief configureLibCurl
