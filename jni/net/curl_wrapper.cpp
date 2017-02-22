@@ -14,11 +14,15 @@
 
 godin::CurlWrapper::CurlWrapper() {
   libCurl_ = curl_easy_init();
+  headers_ = nullptr;
 }
 
 godin::CurlWrapper::~CurlWrapper() {
   if(libCurl_ != NULL)
     curl_easy_cleanup(libCurl_);
+  if (headers_) {
+    curl_slist_free_all(headers_);
+  }
 }
 
 
@@ -112,12 +116,12 @@ bool godin::CurlWrapper::initCurl(const godin::HttpRequest *request,
    */
   bool code = false;
   if(is_https){
-   code =  setCurlOption(CURLOPT_SSL_VERIFYPEER, 0);
+   code =  setCurlOption(CURLOPT_SSL_VERIFYPEER, 0L);
    if (!code) {
      godin::Log::e(" configure CURLOPT_SSL_VERIFYPEER failed.");
      return false;
    }
-   code =  setCurlOption(CURLOPT_SSL_VERIFYHOST, 0);
+   code =  setCurlOption(CURLOPT_SSL_VERIFYHOST, 0L);
    if (!code) {
      godin::Log::e(" configure CURLOPT_SSL_VERIFYHOST failed.");
      return false;
