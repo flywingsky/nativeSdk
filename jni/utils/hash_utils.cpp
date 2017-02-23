@@ -1,3 +1,12 @@
+/**
+ * Project : weimi-native-sdk
+ * FileName: hash_utils.cpp
+ * date    : 2017-02-23
+ * time    : 19:23:52
+ * author  : genglei.cuan@godinsec.com
+ */
+
+
 #include "hash_utils.h"
 #include <cryptopp/hex.h>
 #include <cryptopp/files.h>

@@ -1,3 +1,12 @@
+/**
+ * Project : weimi-native-sdk
+ * FileName: hash_utils.h
+ * date    : 2017-02-23
+ * time    : 19:23:36
+ * author  : genglei.cuan@godinsec.com
+ */
+
+
 #ifndef HASHUTILS_H
 #define HASHUTILS_H
 

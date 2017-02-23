@@ -1,3 +1,12 @@
+/**
+ * Project : weimi-native-sdk
+ * FileName: file_utils.cpp
+ * date    : 2017-02-23
+ * time    : 19:23:28
+ * author  : genglei.cuan@godinsec.com
+ */
+
+
 #include "file_utils.h"
 #include <unistd.h>
 #include <sys/types.h>

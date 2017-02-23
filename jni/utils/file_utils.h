@@ -1,3 +1,12 @@
+/**
+ * Project : weimi-native-sdk
+ * FileName: file_utils.h
+ * date    : 2017-02-23
+ * time    : 19:23:20
+ * author  : genglei.cuan@godinsec.com
+ */
+
+
 #ifndef FILEUTILS_H
 #define FILEUTILS_H
 #include <base/macros.h>
