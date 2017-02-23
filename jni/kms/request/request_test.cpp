@@ -1,3 +1,11 @@
+/**
+ * Project : weimi-native-sdk
+ * FileName: request_test.cpp
+ * date    : 2017-02-22
+ * time    : 11:18:43
+ * author  : genglei.cuan@godinsec.com
+ */
+
 #include "request_test.h"
 #include <string>
 #include <json11.hpp>

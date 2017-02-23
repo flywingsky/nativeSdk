@@ -1,3 +1,12 @@
+
+/**
+ * Project : weimi-native-sdk
+ * FileName: authsms_json.h
+ * date    : 2017-02-22
+ * time    : 16:19:34
+ * author  : genglei.cuan@godinsec.com
+ */
+
 #ifndef AUTHSMSJSON_H
 #define AUTHSMSJSON_H
 

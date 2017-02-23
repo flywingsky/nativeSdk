@@ -1,3 +1,12 @@
+/**
+ * Project : weimi-native-sdk
+ * FileName: authsms_json.cpp
+ * date    : 2017-02-22
+ * time    : 16:19:10
+ * author  : genglei.cuan@godinsec.com
+ */
+
+
 #include "authsms_json.h"
 
 
