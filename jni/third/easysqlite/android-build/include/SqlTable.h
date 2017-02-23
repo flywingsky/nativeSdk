@@ -54,7 +54,6 @@ public:
 	bool copyRecords(Table& source);
 	bool backup(Table& source);
   
-  // sakura extension --------------------------------------------------------
   
   bool addRecordIfNotExists(Record* record, string key, string value);
   bool updateRecord(Record* record, string where_condition);
