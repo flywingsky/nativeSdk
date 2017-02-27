@@ -18,6 +18,8 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <algorithm>
+#include <unistd.h>
+
 
 
 bool godin::FileUtils::isFileExists(const std::string &path) {
@@ -99,16 +101,18 @@ bool godin::FileUtils::createFileBySize(const std::string &path, size_t len) {
    if(fd == -1)
      return false;
    else{
-     /// 取巧办法创建一个指定大小的文件
-     /// 文件末尾是字符"1"．
-     lseek(fd, len - 1, SEEK_SET);
-     write(fd, "1", 1);
+     bool flag = ::ftruncate(fd,len);
      close(fd);
+     if(flag)
+       return true;
    }
-   return true;
+   return false;
 }
 
 bool godin::FileUtils::removeFile(const std::string &path) {
+
+  if(!isFileExists(path))
+    return true;
   if (remove(path.c_str()) == 0) {
     return true;
   } else {
