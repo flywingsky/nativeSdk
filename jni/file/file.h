@@ -9,13 +9,14 @@
 #define FILE_H
 #include <base/macros.h>
 #include <string>
-
+#include <stdio.h>
 
 NS_GODIN_BEGIN
 
 class File {
   public:
     File(const std::string &name);
+    virtual ~File();
 
   public:
     enum OpenMode {
@@ -80,7 +81,7 @@ class File {
 
     /**
      * @brief rename
-     * 文件重命名；
+     * 文件存在的情况下，对文件重命名；
      * 如果newName文件已经存在，则返回false,即不重命名不会覆盖已有文件.
      * 重命名前，会先关闭文件
      *
@@ -94,7 +95,10 @@ class File {
 
     /**
      * @brief resize
-     * 修改文件的大小
+     * 在文件存在的情况下，修改文件的大小;
+     * 如果文件已经打开，会先关闭；
+     * 如果原来的文件大小比参数length大，则超过的部分会被删除；
+     * 如果原来的文件大小比参数length小，则新增部分的内容被0填充(非字符0)
      * @param newSize
      * @return
      */
@@ -138,6 +142,7 @@ class File {
     /**
      * @brief fd
      * 返回fd.
+     * 最好不要直接操作fd
      * @return
      */
     int fd() const {return fd;}
@@ -149,20 +154,49 @@ class File {
      */
     OpenMode openMode() const { return open_mode;}
 
+    /**
+     * @brief mmap
+     * 映射文件到内存；
+     * 不能重复映射；
+     * 在没有执行ummap操作时，再次执行mmap操作，返回false.
+     *
+     * @param size
+     * 映射的大小，size + offset 必须小于文件本身的大小
+     *
+     * @param offset
+     * offset 必须页对其(例如32位下，是4K对其)
+     * @param readOnly
+     * 是否只读映射；
+     * 当为可写映射时，需要保证文件打开的模式必须是可写的,否则返回false.
+     *
+     * @return
+     */
+    uint8_t * mmap(size_t size,size_t offset,bool readOnly);
+
+    /**
+     * @brief munmap
+     * 释放mmap
+     * @return
+     */
+    bool munmap();
+
+    uint8_t* getMmapAddr() const{ return data;}
+
     private:
 
       DISALLOW_COPY_AND_ASSIGN(File);
+
       int fd; ///< 文件句柄
 
       std::string path_name; ///<  路径 + 文件名
 
       std::string file_name; ///< 文件名
 
-      char *data; ///< 文件数据指针
+      uint8_t *data; ///< 文件数据指针
 
-      bool read_only; ///< flag. 只读标志
+      size_t mmap_size; ///< 映射大小
 
-      OpenMode open_mode;
+      OpenMode open_mode; ///< 打开模式
     };
 
 
