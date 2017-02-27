@@ -71,6 +71,14 @@ class FileUtils {
      */
     static size_t getFileSize(const std::string &path);
 
+    /**
+     * @brief getSuffix
+     * 获取文件后缀(如 png,txt,mp4)
+     * 注意不包括"."
+     * @param path
+     * @return
+     */
+    static std::string getSuffix(const std::string &path);
 
 
     /****************   文件操作    *******************/

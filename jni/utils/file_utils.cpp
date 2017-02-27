@@ -64,6 +64,12 @@ size_t godin::FileUtils::getFileSize(const std::string &path) {
   return 0;
 }
 
+std::string godin::FileUtils::getSuffix(const std::string &path) {
+  if(path.find_last_of(".") != std::string::npos)
+     return path.substr(path.find_last_of(".")+1);
+   return "";
+}
+
 bool godin::FileUtils::createFile(const std::string &path) {
 
   /// 可读可写打开
