@@ -15,7 +15,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-
+#include <unistd.h>
+#include <sys/mman.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 
 godin::File::File(const std::string &name) {
@@ -25,7 +28,7 @@ godin::File::File(const std::string &name) {
   open_mode = godin::File::NotOpen;
   read_only = false;
   fd = -1;
-
+  mmap_size = 0 ;
   char *temp_path = realpath(name.c_str(),NULL);
 
   if(temp_path == NULL){
@@ -36,6 +39,10 @@ godin::File::File(const std::string &name) {
    temp_path = NULL;
    file_name = basename((char *)path_name.c_str());
   }
+}
+
+godin::File::~File(){
+  close();
 }
 
 bool godin::File::exists() const {
@@ -72,6 +79,9 @@ bool godin::File::remove() {
 bool godin::File::rename(const std::string &newName) {
 
 
+  if(!exists())
+    return false;
+
   std::string  current_file_dir_path = fileDir();
 
   if(current_file_dir_path.empty())
@@ -82,6 +92,10 @@ bool godin::File::rename(const std::string &newName) {
 
   std::string suffix = (this->suffix().empty() == false) ? (std::string(".")+this->suffix()) : "";
   std::string new_name = current_file_dir_path + newName + suffix;
+
+  if(godin::FileUtils::isFileExists(new_name))
+    return false;
+
   if(::rename(path_name.c_str(),new_name.c_str()) == 0){
       path_name = new_name;
       file_name = newName + suffix;
@@ -93,9 +107,16 @@ bool godin::File::rename(const std::string &newName) {
 
 bool godin::File::resize(size_t newSize) {
 
+  if(!exists())
+    return false;
+
   if(isOpen())
     close();
 
+  if(::truncate(path_name.c_str(),newSize) == 0)
+    return true;
+  else
+    return false;
 
 }
 
@@ -148,8 +169,56 @@ bool godin::File::open(godin::File::OpenMode mode) {
     return false;
 }
 
-void godin::File::close() {
+bool godin::File::close() {
+  bool ret = false;
   if(fd > 0){
-    ::close(fd);
+      if(::close(fd) != 0)
+        return false;
+    }
+
+   return munmap();
+}
+
+uint8_t *godin::File::mmap(size_t size, size_t offset, bool readOnly) {
+
+  if(!isOpen()){
+      if(！open(readOnly == true ? ReadOnly : ReadWrite))
+        return false;
   }
+
+  if(fileSize() < size + offset)
+    return false;
+
+  if(offset % ::sysconf(_SC_PAGESIZE) != 0)
+    return false;
+
+  ///已经mmap过了，再次映射前，需要先释放上次映射的mmap
+  if(data !=NULL )
+    return false;
+
+  if(!readOnly){
+     if(open_mode == ReadOnly)
+       return false;
+  }
+
+
+  data = (uint8_t *) ::mmap( NULL, size, readOnly ? PROT_READ : PROT_READ|PROT_WRITE, MAP_SHARED, fd, len);
+
+  if(data != MAP_FAILED){
+    mmap_size = size;
+    return data;
+  }
+
+
+  return NULL;
+}
+
+bool godin::File::munmap() {
+
+  if(data == NULL || ::munmap(data, mmap_size) == 0) {
+      data = NULL;
+      mmap_size = 0;
+      return true;
+  }
+  return false;
 }
