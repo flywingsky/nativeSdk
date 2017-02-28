@@ -145,7 +145,7 @@ class File {
      * 最好不要直接操作fd
      * @return
      */
-    int fd() const {return fd;}
+    int getFd() const {return fd;}
 
     /**
      * @brief openMode
@@ -158,7 +158,7 @@ class File {
      * @brief mmap
      * 映射文件到内存；
      * 不能重复映射；
-     * 在没有执行ummap操作时，再次执行mmap操作，返回false.
+     * 在没有执行ummap操作时，再次执行mmap操作，返回NULL.
      *
      * @param size
      * 映射的大小，size + offset 必须小于文件本身的大小
@@ -167,7 +167,7 @@ class File {
      * offset 必须页对其(例如32位下，是4K对其)
      * @param readOnly
      * 是否只读映射；
-     * 当为可写映射时，需要保证文件打开的模式必须是可写的,否则返回false.
+     * 当为可写映射时，需要保证文件打开的模式必须是可写的,否则返回NULL.
      *
      * @return
      */

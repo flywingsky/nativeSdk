@@ -26,7 +26,6 @@ godin::File::File(const std::string &name) {
   file_name.clear();
   data = NULL;
   open_mode = godin::File::NotOpen;
-  read_only = false;
   fd = -1;
   mmap_size = 0 ;
   char *temp_path = realpath(name.c_str(),NULL);
@@ -147,19 +146,19 @@ bool godin::File::open(godin::File::OpenMode mode) {
       break;
     case godin::File::ReadWrite:
       fd = ::open(path_name.c_str(),O_RDWR);
-      ReadOnly = ReadWrite;
+      open_mode = ReadWrite;
       break;
     case godin::File::Append:
       fd = ::open(path_name.c_str(),O_RDWR | O_APPEND);
-      ReadOnly = Append;
+      open_mode = Append;
       break;
     case godin::File::Truncate:
       fd = ::open(path_name.c_str(),O_RDWR | O_TRUNC);
-      ReadOnly = Truncate;
+      open_mode = Truncate;
       break;
     default:
       fd = -1;
-      ReadOnly = NotOpen;
+      open_mode = NotOpen;
       godin::Log::e("open file mode is not support. please check it before.");
       break;
     }
@@ -182,27 +181,27 @@ bool godin::File::close() {
 uint8_t *godin::File::mmap(size_t size, size_t offset, bool readOnly) {
 
   if(!isOpen()){
-      if(！open(readOnly == true ? ReadOnly : ReadWrite))
-        return false;
+      if(!open(readOnly == true ? ReadOnly : ReadWrite))
+        return NULL;
   }
 
   if(fileSize() < size + offset)
-    return false;
+    return NULL;
 
   if(offset % ::sysconf(_SC_PAGESIZE) != 0)
-    return false;
+    return NULL;
 
   ///已经mmap过了，再次映射前，需要先释放上次映射的mmap
   if(data !=NULL )
-    return false;
+    return NULL;
 
   if(!readOnly){
      if(open_mode == ReadOnly)
-       return false;
+       return NULL;
   }
 
 
-  data = (uint8_t *) ::mmap( NULL, size, readOnly ? PROT_READ : PROT_READ|PROT_WRITE, MAP_SHARED, fd, len);
+  data = (uint8_t *) ::mmap( NULL, size, readOnly ? PROT_READ : PROT_READ|PROT_WRITE, MAP_SHARED, fd, offset);
 
   if(data != MAP_FAILED){
     mmap_size = size;
