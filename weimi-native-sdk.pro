@@ -33,9 +33,13 @@ HEADERS += \
     jni/kms/request/request_test.h \
     jni/utils/file_utils.h \
     jni/utils/hash_utils.h \
+<<<<<<< HEAD
     jni/file/file.h \
     jni/date/date.h \
     jni/date/time.h
+=======
+    jni/file/file.h
+>>>>>>> e0e7d89f4ba071d8bee5ce464b004aea820a4708
 
 SOURCES += \
     jni/net/http_client.cpp \
@@ -48,6 +52,10 @@ SOURCES += \
     jni/kms/request/request_test.cpp \
     jni/utils/file_utils.cpp \
     jni/utils/hash_utils.cpp \
+<<<<<<< HEAD
     jni/file/file.cpp \
     jni/date/date.cpp \
     jni/date/time.cpp
+=======
+    jni/file/file.cpp
+>>>>>>> e0e7d89f4ba071d8bee5ce464b004aea820a4708
