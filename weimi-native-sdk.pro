@@ -26,13 +26,13 @@ HEADERS += \
     jni/net/http_request.h \
     jni/net/http_response.h \
     jni/net/curl_wrapper.h \
-    jni/kms/respon_json/authsms_json.h \
-    jni/kms/request/request_test.h \
-    jni/utils/string_utils.h \
     jni/utils/log.h \
+    jni/utils/string_utils.h \
+    jni/kms/respon_json/authsms_json.h \
+    jni/kms/request/request_macros.h \
+    jni/kms/request/request_test.h \
     jni/utils/file_utils.h \
     jni/utils/hash_utils.h \
-    jni/sqlite/easysqlite_test.h \
     jni/file/file.h
 
 SOURCES += \
@@ -40,12 +40,10 @@ SOURCES += \
     jni/net/http_request.cpp \
     jni/net/http_response.cpp \
     jni/net/curl_wrapper.cpp \
+    jni/utils/log.cpp \
+    jni/utils/string_utils.cpp \
     jni/kms/respon_json/authsms_json.cpp \
     jni/kms/request/request_test.cpp \
-    jni/test.cpp \
-    jni/utils/string_utils.cpp \
-    jni/utils/log.cpp \
     jni/utils/file_utils.cpp \
     jni/utils/hash_utils.cpp \
-    jni/sqlite/easysqlite_test.cpp \
     jni/file/file.cpp
