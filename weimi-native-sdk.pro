@@ -14,6 +14,10 @@ INCLUDEPATH +=/Users/a-00/work/workcode/nativeSdk/jni/third/json11
 INCLUDEPATH +=/Users/a-00/work/workcode/nativeSdk/jni/third/libcurl/android-build/include
 }
 
+win32 {
+
+}
+
 INCLUDEPATH += jni
 
 HEADERS += \
@@ -21,10 +25,27 @@ HEADERS += \
     jni/base/macros.h \
     jni/net/http_request.h \
     jni/net/http_response.h \
-    jni/net/curl_wrapper.h
+    jni/net/curl_wrapper.h \
+    jni/kms/respon_json/authsms_json.h \
+    jni/kms/request/request_test.h \
+    jni/utils/string_utils.h \
+    jni/utils/log.h \
+    jni/utils/file_utils.h \
+    jni/utils/hash_utils.h \
+    jni/sqlite/easysqlite_test.h \
+    jni/file/file.h
 
 SOURCES += \
     jni/net/http_client.cpp \
     jni/net/http_request.cpp \
     jni/net/http_response.cpp \
-    jni/net/curl_wrapper.cpp
+    jni/net/curl_wrapper.cpp \
+    jni/kms/respon_json/authsms_json.cpp \
+    jni/kms/request/request_test.cpp \
+    jni/test.cpp \
+    jni/utils/string_utils.cpp \
+    jni/utils/log.cpp \
+    jni/utils/file_utils.cpp \
+    jni/utils/hash_utils.cpp \
+    jni/sqlite/easysqlite_test.cpp \
+    jni/file/file.cpp
