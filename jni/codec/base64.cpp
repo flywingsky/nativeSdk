@@ -23,8 +23,14 @@ std::string godin::Base64::encode(const uint8_t *input, size_t size) {
   std::string encoded;
   std::lock_guard<std::mutex> lg(encoder_mutex_);
   encoder_.Detach(new CryptoPP::StringSink(encoded));
-  CryptoPP::StringSource(input, size, true, new CryptoPP::Redirector(encoder_));
-  encoder_.Detach();
+  try{
+    CryptoPP::StringSource(input, size, true, new CryptoPP::Redirector(encoder_));
+    encoder_.Detach();
+  }catch(const CryptoPP::Exception& e){
+    encoder_.Detach();
+    godin::Log::e(" base64 err:  %s",e.GetWhat().c_str());
+    return "";
+  }
   return encoded;
 }
 
@@ -64,10 +70,16 @@ std::string godin::Base64::decodeToString(const std::string &input) {
   std::string decoded;
   std::lock_guard<std::mutex> lg(decoder_mutex_);
   decoder_.Detach(new CryptoPP::StringSink(decoded));
-  CryptoPP::StringSource (input, true,
-      new CryptoPP::Redirector(decoder_)
-  );
-  decoder_.Detach();
+  try{
+    CryptoPP::StringSource (input, true,
+        new CryptoPP::Redirector(decoder_)
+    );
+    decoder_.Detach();
+  }catch(const CryptoPP::Exception& e){
+    decoder_.Detach();
+    godin::Log::e(" base64 err:  %s",e.GetWhat().c_str());
+    return "";
+  }
   return decoded;
 }
 
