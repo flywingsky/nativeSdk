@@ -29,7 +29,12 @@ NS_GODIN_BEGIN
 class Base64 {
 
   public:
-    Base64(){}
+
+    /**
+     * @brief Base64
+     * 初始化Base64Encoder,使其不在结果中插入"空行"
+     */
+    Base64();
 
     /**
      * @brief encode
@@ -48,6 +53,13 @@ class Base64 {
      */
     std::string encode(const std::string &input);
 
+    /**
+     * @brief encodeFile
+     * 使用标准的 base64 编码一个文件
+     * @param inputFile
+     * @param outFile
+     * @return
+     */
     bool encodeFile(const std::string &inputFile,const std::string &outFile);
 
     /**
@@ -58,8 +70,57 @@ class Base64 {
      */
     template<typename T>
     inline std::string encodeVector(const std::vector<T>& input){
-        return encode(const_cast<uint8_t*>(input.data()),input.size()*sizeof(T));
+        return encode((uint8_t*)input.data(),input.size()*sizeof(T));
     }
+
+
+    /**
+     * @brief decodeToVectorUint8
+     * 对base64编码的字符串进行解码，
+     * 返回解码后的二进制数组
+     * @param input
+     * @return
+     */
+    std::vector<uint8_t> decodeToVectorUint8(const std::string &input);
+
+    /**
+     * @brief decodeToString
+     * 对base64编码的字符串进行解码，
+     * 返回解码后的字符串;
+     *
+     * 一定要输入的64编码字符串是有字符串编码生成的,
+     * 否则输出的字符串可能是乱码.
+     * @param input
+     * @return
+     */
+    std::string decodeToString(const std::string &input);
+
+    /**
+     * @brief decodeVector
+     * 对base64编码的字符串进行解码，
+     * 返回编码前数据的类型数组.
+     * @param input
+     * @return
+     */
+    template<typename T>
+    std::vector<T> decodeVector(const std::string&input){
+      std::lock_guard<std::mutex> lg(decoder_mutex_);
+      decoder_.Put((byte*)input.data(), input.size() );
+      decoder_.MessageEnd();
+
+      int64_t size = decoder_.MaxRetrievable();
+      if(size && size <= SIZE_MAX && (size % sizeof(T)==0))
+      {
+          std::vector<T>buffer(size / sizeof(T));
+          decoder_.Get((uint8_t*)buffer.data(), size);
+          return buffer;
+      }
+      std::vector<T> ve;
+      ve.resize(0);
+      return ve;
+    }
+
+    bool decodeFile(const std::string &inputFile,const std::string &outFile);
 
   private:
     DISALLOW_COPY_AND_ASSIGN(Base64);
