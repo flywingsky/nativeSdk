@@ -30,11 +30,19 @@ LOCAL_C_INCLUDES += $(PROJECT_ROOT)\
 
 LOCAL_SRC_FILES := test.cpp\
                    utils/string_utils.cpp\
+									 utils/log.cpp \
+									 utils/file_utils.cpp \
+									 utils/hash_utils.cpp \
 									 net/http_request.cpp\
 									 net/http_response.cpp\
 									 net/http_client.cpp\
 									 net/curl_wrapper.cpp\
-									 utils/log.cpp
+									 kms/request/request_test.cpp\
+									 kms/respon_json/authsms_json.cpp\
+									 file/file.cpp\
+									 date/date.cpp\
+									 codec/base64.cpp\
+
 
 
 LOCAL_SRC_FILES += third/json11/json11.cpp
@@ -44,7 +52,7 @@ LOCAL_MODULE := weimiSDK
 
 LOCAL_LDLIBS += -llog -lz\
 
-LOCAL_STATIC_LIBRARIES := libcurl
+LOCAL_STATIC_LIBRARIES := libcurl libcryptopp
 
 LOCAL_CPPFLAGS	:= -std=gnu++11 -fpermissive
 
