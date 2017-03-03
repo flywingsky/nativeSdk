@@ -42,6 +42,7 @@ LOCAL_SRC_FILES := test.cpp\
 									 file/file.cpp\
 									 date/date.cpp\
 									 codec/base64.cpp\
+									 encrypt/aes_engine.cpp\
 
 
 
