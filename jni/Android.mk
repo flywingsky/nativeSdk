@@ -30,9 +30,10 @@ LOCAL_C_INCLUDES += $(PROJECT_ROOT)\
 
 LOCAL_SRC_FILES := test.cpp\
                    utils/string_utils.cpp\
-									 utils/log.cpp \
-									 utils/file_utils.cpp \
-									 utils/hash_utils.cpp \
+									 utils/log.cpp\
+									 utils/file_utils.cpp\
+									 utils/hash_utils.cpp\
+									 utils/jni_utils.cpp\
 									 net/http_request.cpp\
 									 net/http_response.cpp\
 									 net/http_client.cpp\
@@ -43,6 +44,7 @@ LOCAL_SRC_FILES := test.cpp\
 									 date/date.cpp\
 									 codec/base64.cpp\
 									 encrypt/aes_engine.cpp\
+
 
 
 
