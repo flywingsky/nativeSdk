@@ -24,7 +24,7 @@ class Time {
      * 可用来计算某代码块运行时间时使用
      * @return
      */
-    static int64_t currentTimeMillis();
+    static double currentTimeMillis();
 };
 
 NS_GODIN_END

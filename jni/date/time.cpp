@@ -9,12 +9,8 @@
 #include <sys/time.h>
 #include <time.h>
 
-int64_t godin::Time::currentTimeMillis() {
-  timeval now;
-
-  ::gettimeofday(&now, NULL);
-
-  int64_t when = now.tv_sec * 1000LL + now.tv_usec / 1000;
-
-  return when;
+double godin::Time::currentTimeMillis() {
+  struct timespec res;
+  clock_gettime(CLOCK_REALTIME, &res);
+  return 1000.0 * res.tv_sec + (double) res.tv_nsec / 1e6;
 }
