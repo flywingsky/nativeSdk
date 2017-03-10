@@ -155,6 +155,36 @@ class File {
     OpenMode openMode() const { return open_mode;}
 
     /**
+     * @brief lseekOfStart
+     * 设置文件偏移
+     * @param offset
+     * @return
+     * 成功返回当前的文件偏移量,
+     * 失败返回-1
+     */
+    off_t lseekOfStart(off_t offset);
+
+    /**
+     * @brief getCurrentOffset
+     * 获取当前的文件偏移量
+     * @return
+     * 成功返回当前的文件偏移量,
+     * 失败返回-1
+     */
+    off_t getCurrentOffset();
+
+    /**
+     * @brief write
+     * 将于当前文件偏移处,写入nbytes字节数据
+     * @param buf
+     * @param nbytes
+     * @return
+     * 字节全部写入,返回true;
+     * 其他情况,返回false
+     */
+    bool write(const void* buf,size_t nbytes);
+
+    /**
      * @brief mmap
      * 映射文件到内存；
      * 不能重复映射；

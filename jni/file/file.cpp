@@ -31,7 +31,8 @@ godin::File::File(const std::string &name) {
   char *temp_path = realpath(name.c_str(),NULL);
 
   if(temp_path == NULL){
-   godin::Log::e(" file path :%s ,is invaild. please check it berfore.",name.c_str());
+    path_name = name;
+    file_name = basename((char *)path_name.c_str());
   }else{
    path_name = temp_path;
    free(temp_path);
@@ -175,8 +176,41 @@ bool godin::File::close() {
         return false;
     }
 
-   return munmap();
+  return munmap();
 }
+
+off_t godin::File::lseekOfStart(off_t offset) {
+  if(!isOpen()){
+    godin::Log::e("lseek failed,besause file is not open.");
+    return -1;
+  }
+  return ::lseek(fd,offset,SEEK_SET);
+}
+
+off_t godin::File::getCurrentOffset() {
+  if(!isOpen()){
+    godin::Log::e("lseek failed,besause file is not open.");
+    return -1;
+  }
+  return ::lseek(fd,0,SEEK_CUR);
+}
+
+bool godin::File::write(const void *buf, size_t nbytes) {
+
+  if(!isOpen()){
+    godin::Log::e("write file failed,besause file is not open.");
+    return -1;
+  }
+
+  ssize_t ret = ::write(fd,buf,nbytes);
+
+  if(ret == -1 || ret != nbytes)
+    return false;
+  else
+    return true;
+}
+
+
 
 uint8_t *godin::File::mmap(size_t size, size_t offset, bool readOnly) {
 
