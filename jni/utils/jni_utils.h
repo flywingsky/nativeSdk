@@ -138,6 +138,7 @@ class JniUtils {
      */
     static jstring stringToJString(const std::string& str);
 
+    static int getSdkVersion();
 
   private:
     JniUtils(){}

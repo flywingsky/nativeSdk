@@ -1,6 +1,7 @@
 #include "jni_utils.h"
 #include <pthread.h>
 #include <utils/log.h>
+#include <sys/system_properties.h>
 
 JavaVM* godin::JniUtils::java_vm_ = nullptr;
 
@@ -181,6 +182,16 @@ jstring godin::JniUtils::stringToJString(const std::string &str) {
     return nullptr;
   }
   return env->NewStringUTF(str.c_str());
+}
+
+int godin::JniUtils::getSdkVersion() {
+  char value[PROP_VALUE_MAX]={0};
+    int ret = __system_property_get("ro.build.version.sdk",value);
+    int sdk_version = 0;
+    if(ret<0)
+      return -1;
+    sscanf(value,"%d",&sdk_version);
+    return sdk_version;
 }
 
 JNIEnv *godin::JniUtils::setJniEnv(JavaVM *vm) {
