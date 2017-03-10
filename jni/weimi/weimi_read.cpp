@@ -56,7 +56,8 @@ bool godin::WeimiRead::isWeimiFile() {
     char buf[MAGIC_STR_LEN]={0};
     off_t offset = file_->getCurrentOffset();
     file_->lseekOfStart(0);
-    ::read(file_->getFd(),buf,MAGIC_STR_LEN);
+    if(::read(file_->getFd(),buf,MAGIC_STR_LEN) == -1)
+      return false;
     file_->lseekOfStart(offset);
     if(::strncmp(buf,MAGIC_STR,MAGIC_STR_LEN) == 0)
       return true;
