@@ -42,8 +42,13 @@ LOCAL_SRC_FILES := test.cpp\
 									 kms/respon_json/authsms_json.cpp\
 									 file/file.cpp\
 									 date/date.cpp\
+									 date/time.cpp\
 									 codec/base64.cpp\
 									 encrypt/aes_engine.cpp\
+									 encrypt/encrypt.cpp\
+									 weimi/weimi_write.cpp\
+									 weimi/weimi_read.cpp\
+									 weimi/weimi.cpp\
 
 
 
