@@ -1,0 +1,10 @@
+#ifndef ENCRYPT_MACROS_H
+#define ENCRYPT_MACROS_H
+
+
+/// 32K
+#define DATA_BLOCK_SIZE 32384
+
+#define AES_BLOCK_SIZE  16
+
+#endif // ENCRYPT_MACROS_H

@@ -163,6 +163,8 @@ class AesEngine {
      */
     bool decryptBufToFile(uint8_t * cipher, size_t len, std::string outFilename);
 
+
+
   private:
     DISALLOW_COPY_AND_ASSIGN(AesEngine);
     CryptoPP::CBC_Mode<CryptoPP::AES>::Encryption aesEncryptor_;
