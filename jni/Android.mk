@@ -49,6 +49,7 @@ LOCAL_SRC_FILES := test.cpp\
 									 weimi/weimi_write.cpp\
 									 weimi/weimi_read.cpp\
 									 weimi/weimi.cpp\
+									 weimi/weimi_jni.cpp\
 
 
 

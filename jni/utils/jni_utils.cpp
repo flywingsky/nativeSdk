@@ -194,6 +194,32 @@ int godin::JniUtils::getSdkVersion() {
     return sdk_version;
 }
 
+std::string godin::JniUtils::getFilesDir() {
+  JNIEnv* env = getJniEnv();
+
+  jclass classActivityThread = env->FindClass("android/app/ActivityThread");
+  jmethodID getActivityThreadID = env->GetStaticMethodID(classActivityThread, "currentActivityThread", "()Landroid/app/ActivityThread;");
+  jobject objectCurrentActivityThread = env->CallStaticObjectMethod(classActivityThread, getActivityThreadID);
+  jmethodID getApplicationID = env->GetMethodID(classActivityThread, "getApplication", "()Landroid/app/Application;");
+  jobject objectCurrentApplication = env->CallObjectMethod(objectCurrentActivityThread, getApplicationID);
+  jclass classApp = env->FindClass("android/app/Application");
+  jmethodID getAppContext= env->GetMethodID( classApp, "getApplicationContext", "()Landroid/content/Context;");
+  jobject gAppContext = env->CallObjectMethod(objectCurrentApplication, getAppContext);
+  env->DeleteLocalRef(classActivityThread);
+  env->DeleteLocalRef(classApp);
+
+  jclass classContext = env->FindClass("android/content/Context");
+  jmethodID getFilesDirID = env->GetMethodID(classContext, "getFilesDir", "()Ljava/io/File;");
+  jobject gFilesDir = env->CallObjectMethod(gAppContext, getFilesDirID);
+
+  jclass classFile = env->FindClass("java/io/File");
+  jmethodID getFilesDirPathID = env->GetMethodID(classFile, "getAbsolutePath", "()Ljava/lang/String;");
+
+  jstring gFilesDirPath = (jstring)env->CallObjectMethod(gFilesDir, getFilesDirPathID);
+
+  return jstringToStdString(gFilesDirPath);
+}
+
 JNIEnv *godin::JniUtils::setJniEnv(JavaVM *vm) {
   JNIEnv* env = nullptr;
   jint ret = vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6);

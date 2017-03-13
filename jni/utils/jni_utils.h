@@ -138,7 +138,19 @@ class JniUtils {
      */
     static jstring stringToJString(const std::string& str);
 
+    /**
+     * @brief getSdkVersion
+     * 获取当前 android 系统的 sdk 版本
+     * @return
+     */
     static int getSdkVersion();
+
+    /**
+     * @brief getFilesDir
+     * 获取 files 文件夹路径
+     * @return
+     */
+    static std::string getFilesDir();
 
   private:
     JniUtils(){}
