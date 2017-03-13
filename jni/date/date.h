@@ -141,7 +141,7 @@ class Date {
 
     /**
      * @brief toString
-     * 转换为字符串，格式为1970-01-01 00:00:00
+     * 转换为字符串，格式为1970-01-01-00:00:00
      * @return
      */
     std::string toString() const;
@@ -161,6 +161,7 @@ class Date {
      * 如果发生错误返回空字符串
      */
     std::string format(const char * fmt = "%Y-%m-%d %H:%M:%S") const;
+
 
     /**
      * @brief stamp

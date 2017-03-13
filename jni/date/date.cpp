@@ -47,7 +47,8 @@ int godin::Date::yearMonthDays(int year, int month) {
 }
 
 std::string godin::Date::toString() const {
-  return format();
+  std::string str =  format();
+  return str.replace(10,1,"-");
 }
 
 std::string godin::Date::format(const char *fmt) const {
@@ -57,6 +58,8 @@ std::string godin::Date::format(const char *fmt) const {
     }
     return std::string(buf);
 }
+
+
 
 time_t godin::Date::stamp() const {
   return mktime(const_cast<struct tm *>(&tm_));
