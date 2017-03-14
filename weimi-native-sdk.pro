@@ -35,7 +35,19 @@ HEADERS += \
     jni/utils/hash_utils.h \
     jni/file/file.h \
     jni/date/date.h \
-    jni/date/time.h
+    jni/date/time.h \
+    jni/codec/base64.h \
+    jni/encrypt/aes_engine.h \
+    jni/encrypt/default_key.h \
+    jni/utils/jni_utils.h \
+    jni/weimi/wei_mi_struct.h \
+    jni/weimi/weimi_macros.h \
+    jni/weimi/weimi_write.h \
+    jni/weimi/weimi.h \
+    jni/encrypt/encrypt.h \
+    jni/encrypt/encrypt_macros.h \
+    jni/weimi/weimi_read.h \
+    jni/weimi/weimi_jni.h
 
 
 SOURCES += \
@@ -51,4 +63,13 @@ SOURCES += \
     jni/utils/hash_utils.cpp \
     jni/file/file.cpp \
     jni/date/date.cpp \
-    jni/date/time.cpp
+    jni/date/time.cpp \
+    jni/codec/base64.cpp \
+    jni/test.cpp \
+    jni/encrypt/aes_engine.cpp \
+    jni/utils/jni_utils.cpp \
+    jni/weimi/weimi_write.cpp \
+    jni/weimi/weimi.cpp \
+    jni/encrypt/encrypt.cpp \
+    jni/weimi/weimi_read.cpp \
+    jni/weimi/weimi_jni.cpp
