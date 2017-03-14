@@ -167,8 +167,8 @@ int godin::WeiMi::getFileSecondVerionNum() {
 std::string godin::WeiMi::getCommodityNum() {
   std::string serialNum;
   if(parse_ && read_->getCommodityHeader()){
-     char  serial_num[SERIAL_NUM_LEN+1]= {0};
-     ::memcpy(serial_num,read_->getCommodityHeader()->serial_num,SERIAL_NUM_LEN);
+     char  serial_num[COMMODITY_NUM_LEN+1]= {0};
+     ::memcpy(serial_num,read_->getCommodityHeader()->serial_num,COMMODITY_NUM_LEN);
      serialNum = serial_num;
      return serialNum;
   }

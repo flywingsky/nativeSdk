@@ -28,8 +28,7 @@ LOCAL_C_INCLUDES += $(PROJECT_ROOT)\
 										${JSON11_INCLUDE_PATH} \
 
 
-LOCAL_SRC_FILES := test.cpp\
-                   utils/string_utils.cpp\
+LOCAL_SRC_FILES := utils/string_utils.cpp\
 									 utils/log.cpp\
 									 utils/file_utils.cpp\
 									 utils/hash_utils.cpp\
@@ -67,9 +66,9 @@ LOCAL_CPPFLAGS	:= -std=gnu++11 -fpermissive
 
 
 #include $(BUILD_STATIC_LIBRARY)
-#include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_SHARED_LIBRARY)
 
-include $(BUILD_EXECUTABLE)
+#include $(BUILD_EXECUTABLE)
 
 ### 引入第三房开源库
 

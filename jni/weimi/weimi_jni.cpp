@@ -37,7 +37,7 @@ static std::string appFilesPath = "";
 static jstring native_getCommodityID(JNIEnv* env,jclass clazz,jstring WeiMiFilepath){
 
   std::string filePath = godin::JniUtils::jstringToStdString(WeiMiFilepath);
-
+  godin::Log::e("filepath = %s",filePath.c_str());
   /// 检查文件是否存在,不存在则抛异常 FILE_NOT_EXISTS
   if(!godin::FileUtils::isFileExists(filePath))
     return godin::JniUtils::stringToJString("");
@@ -58,7 +58,7 @@ static jstring native_getCommodityID(JNIEnv* env,jclass clazz,jstring WeiMiFilep
   }
 
   std::string id =  weimi->getCommodityNum();
-
+  godin::Log::e("id = %s",id.c_str());
   /// 秘钥商品 id 非法,抛出异常 COMMODITY_ID_ILLEGAL
   if(id.length() != COMMODITY_NUM_LEN){
       delete weimi;
@@ -84,6 +84,7 @@ static jstring native_getCommodityID(JNIEnv* env,jclass clazz,jstring WeiMiFilep
   for(int i=0;i<CRC_32_BYTES;i++){
       if(id_crc[i] != crc[i]){
           delete weimi;
+          godin::Log::e("commodity crc check failed.");
           return godin::JniUtils::stringToJString("");
       }
   }
@@ -100,6 +101,9 @@ static bool native_encryptWeiMiFile(JNIEnv* env,jclass clazz, jstring jplaintext
   std::string outFile = godin::JniUtils::jstringToStdString(out_file_path);
   std::string commodityId = godin::JniUtils::jstringToStdString(jcommodity_id);
 
+  godin::Log::e("plaint file: %s",plaintextFile.c_str());
+  godin::Log::e("outFile: %s",outFile.c_str());
+  godin::Log::e("commodityId: %s",commodityId.c_str());
   /// 明文文件不存在,抛出异常 FILE_NOT_EXISTS
   if(!godin::FileUtils::isFileExists(plaintextFile))
     return false;
@@ -125,7 +129,6 @@ static bool native_encryptWeiMiFile(JNIEnv* env,jclass clazz, jstring jplaintext
       delete weimi;
       return false;
   }
-
 
   bool ret = weimi->writeFileInfo() &&
              weimi->writeWelcomeSection() &&
@@ -160,7 +163,7 @@ static bool native_encryptWeiMiFile(JNIEnv* env,jclass clazz, jstring jplaintext
 static jstring native_decryptWeiMiFile(JNIEnv* env,jclass clazz,jstring WeiMiFilepath){
 
   std::string filePath = godin::JniUtils::jstringToStdString(WeiMiFilepath);
-
+  godin::Log::e("filepath = %s",filePath.c_str());
   /// 文件不存在,抛出 FILE_NOT_EXISTS
   if(!godin::FileUtils::isFileExists(filePath)){
       return godin::JniUtils::stringToJString("");
@@ -188,9 +191,11 @@ static jstring native_decryptWeiMiFile(JNIEnv* env,jclass clazz,jstring WeiMiFil
 
   std::string fileNameWithoutSuffix = fileName.substr(0,fileName.find_last_of("."));
 
-  std::string outFileName = appFilesPath + "/" +
-                          fileNameWithoutSuffix + "-" + godin::Date().toString() + "-" +
-                          "." + godin::FileUtils::getSuffix(filePath);
+  std::string outFileName = weimiDir + "/" +
+                          fileNameWithoutSuffix +
+                          "." + weimi->getPlaintFileSuffix();
+
+  godin::Log::e("outFileName = %s",outFileName.c_str());
 
   if(godin::FileUtils::isFileExists(outFileName))
     godin::FileUtils::removeFile(outFileName);
@@ -203,9 +208,10 @@ static jstring native_decryptWeiMiFile(JNIEnv* env,jclass clazz,jstring WeiMiFil
   if(!ret){
     godin::Log::e("decrypt file : %s failed.",filePath.c_str());
     delete weimi;
+    delete encrypt;
     return NULL;
-  }
-
+  }else
+    godin::Log::i("decrypt file successed.");
   delete weimi;
   delete encrypt;
   return godin::JniUtils::stringToJString(outFileName);

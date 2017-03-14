@@ -76,7 +76,7 @@ struct WeiMiWelcomeInfo_header {
 struct WeiMiCommodityInfo_header {
   struct WeiMiChunk_header header;
   ///int encode_type;                         ///< 字符串编码格式
-  char serial_num[SERIAL_NUM_LEN];         ///< 商品编号
+  char serial_num[COMMODITY_NUM_LEN];         ///< 商品编号
   uint8_t serial_num_crc[CRC_32_BYTES];    ///> 商品编号CRC校验
 };
 

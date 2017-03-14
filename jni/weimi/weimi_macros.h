@@ -20,7 +20,7 @@
 
 #define DES_CONTENT "此文件由weimi加密.\n"
 
-#define COMMODITY_NUM_LEN 12
+#define COMMODITY_NUM_LEN 32
 
 /// 保证是4的倍数
 #define MAGIC_LEN 8
@@ -31,8 +31,7 @@
 /// 必须是4
 #define CRC_32_BYTES 4
 
-/// 商品编号长度
-#define SERIAL_NUM_LEN 12
+
 
 /// 文件后缀最大长度
 #define FILE_SUFFIX_LEN 8
