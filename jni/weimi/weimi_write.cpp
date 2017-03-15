@@ -50,7 +50,7 @@ bool godin::WeimiWrite::writeFileInfo(godin::WeiMiInfo *info) {
     return false;
   }
 
-  if(file_->write((void*)info,info->info_len) != -1){
+  if(!file_->write((void*)info,info->info_len)){
       welcome_offset_ = info->info_len;
       return true;
   }
@@ -82,10 +82,10 @@ bool godin::WeimiWrite::writeWelcomeSection(godin::WeiMiWelcomeInfo_header *info
       return false;
   }
 
-  if(file_->write((void*)info,info->header.headerSize) == -1)
+  if(!file_->write((void*)info,info->header.headerSize))
       return false;
 
-  if(file_->write((void*)body,len) == -1){
+  if(!file_->write((void*)body,len)){
       commodity_offset_ = 0;
       return false;
   }
@@ -111,7 +111,7 @@ bool godin::WeimiWrite::writeCommoditySection(godin::WeiMiCommodityInfo_header *
       return false;
   }
 
-  if(file_->write((void*)info,info->header.headerSize) == -1){
+  if(!file_->write((void*)info,info->header.headerSize)){
       plainttext_offset_ = 0;
       return false;
   }else{
@@ -134,7 +134,7 @@ bool godin::WeimiWrite::writePlaintextSection(godin::WeiMiPlaintextInfo_header *
       godin::Log::e(" writePlaintextSection err: lseek failed.");
       return false;
   }
-  if(file_->write((void*)info,info->header.headerSize) == -1){
+  if(!file_->write((void*)info,info->header.headerSize)){
       cipher_offset_ = 0;
       return false;
   }else{
@@ -159,7 +159,7 @@ bool godin::WeimiWrite::writeCipherSection(godin::WeiMiCipherInfo_header *info) 
       return false;
   }
   info->offset = cipher_offset_ + info->header.headerSize;
-  if(file_->write((void*)info,info->header.headerSize) == -1){
+  if(!file_->write((void*)info,info->header.headerSize)){
       return false;
   }else{
       return true;
