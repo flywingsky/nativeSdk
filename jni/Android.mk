@@ -58,7 +58,7 @@ LOCAL_SRC_FILES += third/json11/json11.cpp
 
 LOCAL_MODULE := weimiSDK
 
-LOCAL_LDLIBS += -llog -lz\
+LOCAL_LDLIBS += -llog -lz -latomic\
 
 LOCAL_STATIC_LIBRARIES := libcurl libcryptopp
 
