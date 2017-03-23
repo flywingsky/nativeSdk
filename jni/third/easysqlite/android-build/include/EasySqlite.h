@@ -1,5 +1,5 @@
 #ifndef EASYSQLITE_H
-#define EASYSQLITE
+#define EASYSQLITE_H
 
 #include "SqlCommon.h"
 #include "SqlDatabase.h"
@@ -9,4 +9,4 @@
 #include "SqlFieldSet.h"
 #include "SqlValue.h"
 
-#endif // EASYSQLITE
+#endif // EASYSQLITE_H
